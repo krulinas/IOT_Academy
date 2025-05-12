@@ -4,6 +4,7 @@
 #include <Firebase_ESP_Client.h>
 #include "addons/TokenHelper.h"
 #include "addons/RTDBHelper.h"
+#include "display_utils.h"
 
 #define FIREBASE_HOST "https://espressif-18857-default-rtdb.asia-southeast1.firebasedatabase.app/"
 #define API_KEY "AIzaSyA5P8jeIX-EPyuEE4nLZCy3UspKhNxe9S8"
@@ -30,7 +31,15 @@ void initFirebase() {
 
 void streamCallback(FirebaseStream data) {
   if (data.dataType() == "string") {
-    Serial.println("New Data: " + data.stringData());
+    String message = data.stringData();
+    String timestamp = "-";
+
+    Firebase.RTDB.getString(&fbdo, "/texts/last_updated", &timestamp);
+
+    // Display on OLED
+    updateDisplay("Device ID: " + devid, message, "At: " + timestamp);
+
+    Serial.println("New Data: " + message);
   }
 }
 

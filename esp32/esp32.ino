@@ -1,24 +1,28 @@
-#include <WiFi.h>
+#include "display_utils.h"
+#include "eeprom_utils.h"
+#include "wifi_utils.h"
 #include "firebase_utils.h"
-
-const char* ssid = "43BD44-Maxis Fibre";
-const char* password = "b9f2kYPzrq";
+#include "web_server.h"
 
 void setup() {
   Serial.begin(115200);
 
-  WiFi.begin(ssid, password);
-  Serial.print("Connecting to WiFi");
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("\nWiFi Connected");
+  initDisplay();
+  showStartupScreen();
 
-  initFirebase();
-  startFirebaseStream(); 
+  readCredentialsFromEEPROM();
+  bool connected = connectToWiFi();
+
+  if (!connected) {
+    startAccessPointMode(); // fallback
+  } else {
+    updateDisplay("WiFi Connected", "Connecting Firebase...", "");
+    initFirebase();
+    startFirebaseStream();
+  }
 }
 
 void loop() {
-  maintainFirebaseConnection();
+  handleWebRequests();          // If in AP mode, keep web server running
+  maintainFirebaseConnection(); // For token refresh
 }
