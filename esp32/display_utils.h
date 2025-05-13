@@ -34,6 +34,32 @@ void showStartupScreen() {
   delay(2000);
 }
 
+void showAPModeScreen() {
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 0);
+  display.println("AP Mode Launched");
+  display.setCursor(0, 10);
+  display.println("Connect to:");
+  display.setCursor(0, 20);
+  display.println("ESP32_2025");
+  display.display();
+}
+
+void showWiFiSuccessScreen(String ssid, String devid) {
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 0);
+  display.println("Connected to:");
+  display.setCursor(0, 10);
+  display.println(ssid);
+  display.setCursor(0, 20);
+  display.println("ID: " + devid);
+  display.display();
+}
+
 void updateDisplay(String a, String b, String c) {
   display.clearDisplay();
   display.setTextSize(1);
